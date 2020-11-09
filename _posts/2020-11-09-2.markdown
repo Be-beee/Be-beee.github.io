@@ -1,0 +1,54 @@
+---
+layout: post
+title: 1. GCD, Operation 개요
+image: 2.jpg
+tags: [Github, Blog]
+categories: Concurrency
+---
+*해당 포스팅은 [iOS Concurrency(동시성) 프로그래밍, 동기 비동기 처리 그리고 GCD/Operation - 디스패치큐와 오퍼레이션큐의 이해](https://www.inflearn.com/course/iOS-Concurrency-GCD-Operation) 강의를 수강하고 개인적으로 정리한 내용을 기록한 것 입니다.*
+<br>
+<br>
+
+## iOS 비동기 처리
+---
+iOS에서는 크게 두 가지의 비동기 처리 기술을 제공하고 있다. 이번 포스팅에서는 그 두 가지 기술인 **GCD**와 **Operation Queue**에 대해 간단히 요약하여 정리하고자 한다.
+
+iOS에서의 비동기 처리는 프로그래머가 직접 스레드를 관리하지 않고 **큐(queue)에 해당 작업을 보내기**만 함으로써 이루어진다. 
+
+이후 시스템에서는 GCD 또는 Operation Queue를 사용해 알아서 스레드 넘버를 관리한다. 다른 스레드에서는 오래 걸릴 작업들이 비동기적으로 동작하도록 만들어주는 역할을 한다.
+
+따라서 프로그래머는 **어떤 큐에 어떤 시스템 품질로 작업을 보낼지**를 고민하는 것이 중요하다.
+
+간단한 GCD의 사용 예시는 다음과 같다.
+{% highlight Swift %}
+DispatchQueue.global().async { // global queue에 비동기적으로 보낸다
+	// 작업의 한 단위, 하나의 클로저 안에 보내는 작업 전부가 묶여서 보내짐
+	// 내부의 코드는 순차적으로 작동한다
+}
+{% endhighlight %}
+<br>
+<br>
+
+
+## GCD와 Operation Queue의 차이점
+---
+GCD와 Operation Queue의 차이점은 간단하게 다음과 같이 설명할 수 있다.
+
+- **GCD**
+	* Grand Centural Dispatch, DispatchQueue
+	* 간단한 일
+	* 함수를 사용하는 작업(메서드 위주)
+
+- **Operation Queue**
+	* 오퍼레이션 큐
+	* 복잡한 일
+	* 데이터와 기능을 캡슐화한 객체
+	* GCD 기반으로 여러가지 기능(취소, 순서 지정, 일시 중지(상태 추척))을 추가하여 만들어진 것
+
+![GCD와 Operation의 차이점]({{site.baseurl}}/images/20201109_img1.png)
+
+위의 두 방식 중 작업마다 어떤 방식을 반드시 써야한다고 정해진 것은 아니며 프로그래머는 차이점을 충분히 인식하고 적절하게 사용할 수 있어야 한다.
+
+<br>
+<br>
+*이미지 및 내용 참고: https://www.inflearn.com/course/iOS-Concurrency-GCD-Operation*
