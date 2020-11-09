@@ -1,0 +1,80 @@
+---
+layout: post
+title: 깃허브 블로그를 처음 개설하며 (bundle install 에러 해결하기)
+image: 20201109.png
+tags: [Github, Blog]
+categories: blog
+---
+이전까지 티스토리 블로그를 사용해 오다가 깃허브 블로그는 포스팅하면 바로 커밋이 된다는 장점 하나만 보고(...) 블로그를 옮기기로 결심했다.
+~~이 죽일 놈의~~ 게으름 때문에 티스토리 블로그 자체도 글을 자주 올리지는 않은 터라 아예 처음부터 새로운 마음 가짐으로 시작하기로 하였다. 이 곳에서는 최소한 2일 1포스팅을 할 수 있기를 바란다.
+
+이대로 포스팅을 끝내기는 아쉬우니 깃허브 블로그를 개설하는 동안 나를 하루 종일 괴롭혔던 에러들에 대해 소개하고자 한다.
+
+블로그 개설은 [줌코딩](https://zoomkoding.github.io/gitblog/2019/08/15/git-blog-1.html)님의 블로그 글을 참고하여 진행하였다.
+동일한 방법으로 진행하였으나, 나의 경우 두 가지 문제점이 발생하였다.
+<br>
+<br>
+<br>
+
+### 1. Gem::FilePermissionError
+---
+
+`$ gem install bundler`를 실행했을 때 나타난 에러로 Mac에서 시스템 Ruby를 통해 gem에 접근하여 나타난 에러이다.
+`sudo`를 통해 해결할 수도 있으나 보안상 권장하지 않는다 하여 rbenv를 통해 해당 에러를 해결하였다.
+
+{% highlight zsh %}
+$ brew update
+$ brew install rbenv ruby -build
+{% endhighlight %}
+
+위와 같이 brew를 통해 rbenv를 설치한 후,
+
+{% highlight zsh %}
+$ rbenv install -l
+$ rbenv install 2.7.2
+{% endhighlight %}
+위의 커맨드를 통해 설치 가능한 Ruby 버전들을 확인 후 현재(2020.11.08) 가장 최신 버전인 2.7.2 버전을 설치하였다.
+
+2.7.2로 global 버전을 변경하고
+{% highlight zsh %}
+$ rbenv global 2.7.2
+{% endhighlight %}
+
+rbenv PATH를 추가하기 위해 `.zshrc`파일에 다음과 같은 내용을 추가하였다.
+{% highlight zsh %}
+export PATH="$HOME/.rbenv/bin:$PATH"
+eval "$(rbenv init -)"
+{% endhighlight %}
+
+`source`를 통해 환경 변수를 적용한 후 다시 `$ gem install bundler`를 실행하면 정상적으로 설치가 완료 된다.
+{% highlight zsh %}
+$ source .zshrc
+{% endhighlight %}
+<br>
+<br>
+<br>
+
+### 2. ERROR: Failed to build gem native extension
+---
+`$ bundle install`을 실행했을 때 발생한 에러로, 열심히.. 구글링해 본 결과 `Gemfile`에서 요구하는 패키지 버전과 실제 존재하는 패키지 버전이 달라 발생하는 에러인 듯 하다. 
+~~리액트 네이티브와의 아찔한 추억이 잠시 스쳐 지나갔다.~~ <br>
+결론부터 말하자면, 아래의 간단한 커맨드로 해당 에러를 해결할 수 있었다.
+
+{% highlight zsh %}
+$ bundle update
+{% endhighlight %}
+
+실행 후 로그를 보면 `Gemfile`에서 필요로 하는 패키지 버전을 자동으로 다운 받아 주는 역할을 하는 것 같다. 이후 다시 `$ bundle install`을 실행하면 정상적으로 동작 한다. 매우 간단한 해결 방법이지만 하루를 날린 가장 큰 원인이었다.(ㅠㅠ)
+<br>
+
+다행히 이 후 다른 에러는 발생하지 않아 성공적으로 블로그를 개설할 수 있었고 첫 포스팅도 무사히 마칠 수 있었다. 앞으로도 다양하고 알찬 내용을 기록할 수 있으면 좋겠다.
+<br>
+
+---
+*2020.11.09 추가* <br>
+`fork`를 통해 가져온 템플릿은 커밋, 푸시를 해도 잔디에 반영되지 않는다는 것을 깨달았다. 아직 깃허브에 미숙하다는 게 들통나버린 순간이다. <br>
+결국 저장소를 새로 생성해서 다시 만들었다. 이제 진짜 블로그 시작이다!
+
+참고: https://jojoldu.tistory.com/288 <br>
+https://blog.naver.com/flowerdances/221110593847
+
