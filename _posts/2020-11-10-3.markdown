@@ -1,0 +1,52 @@
+---
+layout: post
+title: 2. Sync vs. Async
+image: 3.jpg
+tags: [Github, Blog]
+categories: Concurrency
+---
+*해당 포스팅은 [iOS Concurrency(동시성) 프로그래밍, 동기 비동기 처리 그리고 GCD/Operation - 디스패치큐와 오퍼레이션큐의 이해](https://www.inflearn.com/course/iOS-Concurrency-GCD-Operation) 강의를 수강하고 개인적으로 정리한 내용을 기록한 것 입니다.*
+<br>
+<br>
+
+{% highlight markdown %}
+시작하기 전에: 비동기라는 개념이 필요한 이유
+대부분은 시간이 오래 걸리는 *서버와의 통신(네트워크 작업)*에 필요하기 때문.
+URLSession과 같은 네트워크와 관련된 객체 및 메서드는 내부가 비동기적으로 구현되어있다.
+{% endhighlight %}
+<br>
+
+## 비동기(Async)
+---
+작업을 보내고, 작업이 끝나는 것을 **기다리지 않은 채** 즉시 리턴 하는 방식을 말한다. <br>
+작업을 처리하는 시간 자체가 오래 걸릴 때, 그리고 작업이 언제 끝나는 지 관심 없을 때 유용하다.
+물론, 작업이 끝날 때가 필요할 경우 completion handler를 통해 작업이 끝날 때 실행할 내용을 지정해 줄 수도 있다. <br>
+사용 예시는 다음과 같다.
+
+{% highlight Swift %}
+DispatchQueue.global().async {
+	// 디스패치 글로벌 큐로 보낼 작업
+}
+// 원래의 작업이 진행되고 있던 곳 (메인 스레드)
+// 보낸 작업을 기다리지 않는다.
+{% endhighlight %}
+<br>
+<br>
+
+## 동기(Sync)
+---
+작업을 보내고, 작업이 끝나는 것을 **기다린 후** 리턴한다. <br>
+작업 시간이 오래 걸리더라도 해당 작업 시간이 모두 끝날 때까지 기다린다. 따라서 실질적으로는 **메인 스레드에서 일하는 것과 동일**할 수 있어서 거의 사용하지 않는다.
+
+사용 예시는 다음과 같다.
+
+{% highlight Swift %}
+DispatchQueue.global().sync {
+	// 디스패치 글로벌 큐로 보낼 작업
+}
+// 원래의 작업이 진행되고 있던 곳 (메인 스레드)
+// 보낸 작업을 기다린다.
+{% endhighlight %}
+<br>
+<br>
+
