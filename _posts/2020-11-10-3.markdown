@@ -2,7 +2,7 @@
 layout: post
 title: 2. Sync vs. Async
 image: 3.jpg
-tags: [Github, Blog]
+tags: [iOS, Concurrency, Swift]
 categories: Concurrency
 ---
 *해당 포스팅은 [iOS Concurrency(동시성) 프로그래밍, 동기 비동기 처리 그리고 GCD/Operation - 디스패치큐와 오퍼레이션큐의 이해](https://www.inflearn.com/course/iOS-Concurrency-GCD-Operation) 강의를 수강하고 개인적으로 정리한 내용을 기록한 것 입니다.*
