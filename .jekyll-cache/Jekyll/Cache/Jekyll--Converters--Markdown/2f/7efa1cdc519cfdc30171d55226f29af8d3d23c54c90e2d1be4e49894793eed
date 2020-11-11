@@ -1,0 +1,16 @@
+I"Z<p><em>해당 포스팅은 <a href="https://www.inflearn.com/course/iOS-Concurrency-GCD-Operation">iOS Concurrency(동시성) 프로그래밍, 동기 비동기 처리 그리고 GCD/Operation - 디스패치큐와 오퍼레이션큐의 이해</a> 강의를 수강하고 개인적으로 정리한 내용을 기록한 것 입니다.</em>
+<br />
+<br /></p>
+
+<p>대기열(Queue)은 여러 종류와 갯수가 있으며 각 대기열의 특성이 다르다. 작업의 특성, 원하는 일처리에 따라 대기열의 특성에 맞게 작업을 보내야한다.</p>
+
+<p>이번 포스팅에서는 이러한 대기열의 종류와 특성에 대해 기록하고자 한다.</p>
+
+<h2 id="디스패치-큐의-종류">디스패치 큐의 종류</h2>
+<hr />
+
+<ul>
+  <li>메인(main): 유일함(한 개), serial, 메인 스레드(DispatchQueue.main)</li>
+  <li></li>
+</ul>
+:ET

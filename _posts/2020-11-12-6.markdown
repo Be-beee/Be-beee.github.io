@@ -1,0 +1,92 @@
+---
+layout: post
+title: 4. 디스패치큐(GCD)의 종류와 특성
+image: 7.jpg
+tags: [iOS, Concurrency, Swift]
+categories: Concurrency
+---
+*해당 포스팅은 [iOS Concurrency(동시성) 프로그래밍, 동기 비동기 처리 그리고 GCD/Operation - 디스패치큐와 오퍼레이션큐의 이해](https://www.inflearn.com/course/iOS-Concurrency-GCD-Operation) 강의를 수강하고 개인적으로 정리한 내용을 기록한 것 입니다.*
+<br>
+<br>
+
+대기열(Queue)은 여러 종류와 갯수가 있으며 각 대기열의 특성이 다르다. <u>작업의 특성, 원하는 일처리에 따라</u> 대기열의 특성에 맞게 작업을 보내야한다. 
+
+이번 포스팅에서는 이러한 대기열의 종류와 특성에 대해 기록하고자 한다.
+<br>
+<br>
+
+
+## 디스패치 큐의 종류
+---
+- **메인(main)**: 유일함(한 개), serial, 메인 스레드(DispatchQueue.main)
+- **글로벌(global)**: 종류 여러 개, concurrent(기본 설정), QoS(6종류)
+- **프라이빗(custom)**: 디폴트 생성은 serial, 변경 가능(concurrent로), 사용자화 디스패치 큐
+
+메인 스레드 예시)
+{% highlight Swift %}
+DispatchQueue.main.asyncAfter(.now()+2) {
+	// 메인 쓰레드로 보낼 작업
+}
+// 지금으로부터(.now()) 2초 뒤에 해당 작업을 보낼 것이다.
+{% endhighlight %}
+
+{% highlight Swift %}
+// 의미상 아래 두 코드는 완전히 동일하다. 
+// 다만 첫번째 코드는 (현재 작업 중인 위치가 메인 스레드일 경우) 에러가 발생한다.
+DispatchQueue.main.sync { // 1
+	print("Hello")
+}
+
+print("Hello") // 2
+{% endhighlight %}
+<br>
+
+
+글로벌 큐 예시)
+{% highlight Swift %}
+DispatchQueue.global(qos: .userInteractive).async { }
+{% endhighlight %}
+<br>
+
+프라이빗 큐 예시)
+{% highlight Swift %}
+let queue = DispatchQueue(label: "com.sbk.serial")
+let queue2 = DispatchQueue(label: "com.sbk.concurrent", attributes: .concurrent)
+{% endhighlight %}
+<br>
+<br>
+<br>
+
+
+## QoS: Quality of Service
+---
+글로벌 큐의 서비스 품질을 의미한다. 총 5가지가 있으며(Unspecified는 거의 사용하지 않는다.) 번호가 낮을 수록 우선 순위가 높다.
+<br>
+
+1. **UserInteractive [거의 즉시]**: 유저와 직접적 인터렉티브(UI 업데이트, 애니메이션, UI 반응 등과 같은 사용자와 상호작용하는 작업)
+2. **UserInitiated [몇 초]**: 유저가 즉시 필요하긴 하지만, 비동기적으로 처리된 작업 (ex. 앱 내에서 pdf 파일 열기)
+3. **Default**: 일반적인 작업
+4. **Utility [몇 초에서 몇 분]**: 보통 Progress Indicator와 함께 길게 실행되는 작업, 계산, IO, Networking, 지속적인 데이터 feeds
+5. **Background [속도보다는 에너지 효율성 중시, 몇 분 이상]**: 유저가 직접적으로 인지하지 않고 시간이 중요하지 않은 작업. 데이터 미리 가져오기, 데이터베이스 유지
+6. **Unspecified**: legacy API
+
+{% highlight markdown %}
+**다른 우선 순위의 글로벌 큐에 각각 작업이 보내졌을 때:**
+iOS가 알아서 우선적으로 중요한 작업을 인지하고 더 많은 스레드를 배치하고 배터리를 더 집중해서 사용하도록 한다.
+{% endhighlight %}
+<br>
+<br>
+
+### 큐와 작업 수준이 다를 때
+---
+-> 더 높은 우선 순위를 따라 상승한다.
+{% highlight Swift %}
+let queue = DispatchQueue.global(qos: .background) // background로 정의
+queue.async(qos: .utility) { // 작업을 더 높은 수준으로 보냄
+		
+}
+// 작업에 따라 큐의 우선순위가 background -> utility로 상승
+{% endhighlight %}
+
+
+
