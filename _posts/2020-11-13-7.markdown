@@ -1,0 +1,118 @@
+---
+layout: post
+title: 5. GCD 사용 시 주의해야 할 사항
+image: 8.jpg
+tags: [iOS, Concurrency, Swift]
+categories: Concurrency
+---
+*해당 포스팅은 [iOS Concurrency(동시성) 프로그래밍, 동기 비동기 처리 그리고 GCD/Operation - 디스패치큐와 오퍼레이션큐의 이해](https://www.inflearn.com/course/iOS-Concurrency-GCD-Operation) 강의를 수강하고 개인적으로 정리한 내용을 기록한 것 입니다.*
+<br>
+<br>
+
+## 반드시 메인 큐에서 처리해야할 작업
+---
+**UI 관련 작업**은 모두 '메인 스레드'에서 처리해야 한다. 메인 스레드에서만 화면을 처리하는 일을 담당하고 있기 때문인데 이러한 작업을 타 스레드에 맡겨버리면 작업의 충돌과 화면 간의 간섭이 발생할 수 있다.
+
+{% highlight Swift %}
+DispatchQueue.global().async {
+	//이미지 다운로드 관련 코드
+	DispatchQueue.main.async {
+		//다운로드한 이미지 표시 코드 (UI 작업)
+		self.imageView.image = image
+	}
+}
+{% endhighlight %}
+
+{% highlight Swift %}
+URLSession.shared.dataTask(with: url) { //GCD, Operation 필요 없음, 이미 URLSession에 내장됨
+	DispatchQueue.main.async {
+		//다운로드한 이미지 표시 코드 (UI 작업)
+		self.imageView.image = image
+	}
+}
+{% endhighlight %}
+<br>
+<br>
+<br>
+
+## sync 메서드에 대한 주의 사항
+---
+- **메인 스레드에서는 다른 스레드로 작업을 보낼 때 sync 메서드를 불러서는 안된다.(메인 큐에서는 항상 비동기적으로 보내야 한다.)**: 
+
+메인 스레드에서 동작하는 UI 관련 작업은 즉각적인 반응을 요구하고 다른 스레드로 보낼 작업은 대개 오래 걸리는 작업이기 때문에 동기적으로 작업을 보내면 UI가 멈춰 버리고 유저에게 늦은 반응을 보일 수 있다.
+{% highlight Swift %}
+//현재 메인에서 일하고 있다면?
+DispatchQueue.global().sync{ } // 해당 코드는 사용하면 안된다.
+{% endhighlight %}
+<br>
+
+- **현재의 스레드에서 같은 스레드로 "동기적으로" 작업을 보내서는 안된다.** : 
+
+다른 스레드로 작업을 보내면서 현재의 스레드는 잠기게 되는데, 현재의 스레드를 잠그는 것과 동시에 다시 현재의 스레드로 접근하는 것이 되어버리므로 교착 상태가 발생해버린다.
+
+아래의 예시처럼 서로 다른 객체 간의 메서드 호출에서 발생할 수 있다.
+{% highlight Swift %}
+ViewController: UIViewController {
+	// .. 생략
+	DispatchQueue.global().async {
+		sample_method()
+	}
+}
+
+func sample_method() {
+	// 생략
+	DispatchQueue.global().sync { }
+}
+{% endhighlight %}
+<br>
+<br>
+<br>
+
+## weak, strong 캡처 주의
+---
+작업을 보낸다는 것은 클로저를 보낸다는 의미로, 이는 객체에 대한 캡처가 발생한다는 것을 뜻한다. weak 캡처를 해주지 않으면 뷰 컨트롤러가 dismiss되어도 스레드로 보낸 클로저(작업)가 여전히 동작할 수 있으므로 주의가 필요하다.
+{% highlight Swift %}
+DispatchQueue.global(qos: .utility).async { [weak self] in // weak 캡처
+	guard let self = self else { return }
+
+	DispatchQueue.main.async {
+		self.textLabel.text = "New posts updated!"
+	}
+}
+{% endhighlight %}
+<br>
+<br>
+<br>
+
+
+## 비동기적으로 작업을 보내고 난 후 주의 사항
+---
+- **비동기적으로 작업을 보내고 난 후 작업에서 사용하는 값을 바로 사용해서는 안된다.** 
+
+작업이 아직 종료하지 않았는데 해당 값에 접근 하면 잘못된 값을 사용할 확률이 높다. <br>
+이러한 문제를 방지하기 위해 해당 비동기 작업이 끝났다는 것을 정확히 알려주는 **컴플리션 핸들러(completionHandler)**를 활용하여야 한다. 비동기 함수와 관련된 작업은 모두 컴플리션 핸들러를 가지고 있다.
+<br>
+<br>
+<br>
+
+
+## 동기적 함수를 비동기 함수처럼 만드는 방법 (재사용 목적)
+---
+컴플리션 핸들러, 디스패치 큐(일을 하도록 시킬 큐, 일을 마치고 나서 실행시킬 큐)를 파라미터로 받는다.
+{% highlight Swift %}
+func async_sample_method(_ img: UIImage?, runQueue: DispatchQueue, completionQueue: DispatchQueue, completion: @escaping (UIImage?, Error?) -> ()) {
+	runQueue.async {
+		var error: Error?
+		error = .none
+
+		let outputImg = sample(img: img)
+		completionQueue.async {
+			completion(outputImg, error)
+		}
+	}
+}
+{% endhighlight %}
+
+
+
+

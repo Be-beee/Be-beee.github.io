@@ -1,0 +1,77 @@
+I"W<p><em>해당 포스팅은 <a href="https://www.inflearn.com/course/iOS-Concurrency-GCD-Operation">iOS Concurrency(동시성) 프로그래밍, 동기 비동기 처리 그리고 GCD/Operation - 디스패치큐와 오퍼레이션큐의 이해</a> 강의를 수강하고 개인적으로 정리한 내용을 기록한 것 입니다.</em>
+<br />
+<br /></p>
+
+<h2 id="반드시-메인-큐에서-처리해야할-작업">반드시 메인 큐에서 처리해야할 작업</h2>
+<hr />
+
+<p><strong>UI 관련 작업</strong>은 모두 ‘메인 스레드’에서 처리해야 한다. 메인 스레드에서만 화면을 처리하는 일을 담당하고 있기 때문인데 이러한 작업을 타 스레드에 맡겨버리면 작업의 충돌과 화면 간의 간섭이 발생할 수 있다.</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="kt">DispatchQueue</span><span class="o">.</span><span class="nf">global</span><span class="p">()</span><span class="o">.</span><span class="n">async</span> <span class="p">{</span>
+	<span class="c1">//이미지 다운로드 관련 코드</span>
+	<span class="kt">DispatchQueue</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">async</span> <span class="p">{</span>
+		<span class="c1">//다운로드한 이미지 표시 코드 (UI 작업)</span>
+		<span class="k">self</span><span class="o">.</span><span class="n">imageView</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">image</span>
+	<span class="p">}</span>
+<span class="p">}</span></code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="kt">URLSession</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="nf">dataTask</span><span class="p">(</span><span class="nv">with</span><span class="p">:</span> <span class="n">url</span><span class="p">)</span> <span class="p">{</span> <span class="c1">//GCD, Operation 필요 없음, 이미 URLSession에 내장됨</span>
+	<span class="kt">DispatchQueue</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">async</span> <span class="p">{</span>
+		<span class="c1">//다운로드한 이미지 표시 코드 (UI 작업)</span>
+		<span class="k">self</span><span class="o">.</span><span class="n">imageView</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">image</span>
+	<span class="p">}</span>
+<span class="p">}</span></code></pre></figure>
+
+<p><br />
+<br />
+<br /></p>
+
+<h2 id="sync-메서드에-대한-주의-사항">sync 메서드에 대한 주의 사항</h2>
+<hr />
+
+<ul>
+  <li><strong>메인 스레드에서는 다른 스레드로 작업을 보낼 때 sync 메서드를 불러서는 안된다.(메인 큐에서는 항상 비동기적으로 보내야 한다.)</strong>: 메인 스레드에서 동작하는 UI 관련 작업은 즉각적인 반응을 요구하고 다른 스레드로 보낼 작업은 대개 오래 걸리는 작업이기 때문에 동기적으로 작업을 보내면 UI가 멈춰 버리고 유저에게 늦은 반응을 보일 수 있다.</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="c1">//현재 메인에서 일하고 있다면?</span>
+<span class="kt">DispatchQueue</span><span class="o">.</span><span class="nf">global</span><span class="p">()</span><span class="o">.</span><span class="n">sync</span><span class="p">{</span> <span class="p">}</span> <span class="c1">// 해당 코드는 사용하면 안된다.</span></code></pre></figure>
+
+<p><br /></p>
+
+<ul>
+  <li><strong>현재의 스레드에서 같은 스레드로 “동기적으로” 작업을 보내서는 안된다.</strong> : 다른 스레드로 작업을 보내면서 현재의 스레드는 잠기게 되는데, 현재의 스레드를 잠그는 것과 동시에 다시 현재의 스레드로 접근하는 것이 되어버리므로 교착 상태가 발생해버린다.</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="kt">ViewController</span><span class="p">:</span> <span class="kt">UIViewController</span> <span class="p">{</span>
+	<span class="c1">// .. 생략</span>
+	<span class="kt">DispatchQueue</span><span class="o">.</span><span class="nf">global</span><span class="p">()</span><span class="o">.</span><span class="n">async</span> <span class="p">{</span>
+		<span class="nf">sample_method</span><span class="p">()</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">sample_method</span><span class="p">()</span> <span class="p">{</span>
+	<span class="c1">// 생략</span>
+	<span class="kt">DispatchQueue</span><span class="o">.</span><span class="nf">global</span><span class="p">()</span><span class="o">.</span><span class="n">sync</span> <span class="p">{</span> <span class="p">}</span>
+<span class="p">}</span></code></pre></figure>
+
+<p><br />
+<br />
+<br /></p>
+
+<h2 id="비동기적으로-작업을-보내고-난-후-주의-사항">비동기적으로 작업을 보내고 난 후 주의 사항</h2>
+<hr />
+
+<ul>
+  <li><strong>비동기적으로 작업을 보내고 난 후 작업에서 사용하는 값을 바로 사용해서는 안된다.</strong></li>
+</ul>
+
+<p>작업이 아직 종료하지 않았는데 해당 값에 접근 하면 잘못된 값을 사용할 확률이 높다. <br />
+이러한 문제를 방지하기 위해 해당 비동기 작업이 끝났다는 것을 정확히 알려주는 <strong>컴플리션 핸들러(completionHandler)</strong>를 활용하여야 한다. 비동기 함수와 관련된 작업은 모두 컴플리션 핸들러를 가지고 있다.
+<br />
+<br />
+<br /></p>
+
+<h2 id="동기적-함수를-비동기-함수처럼-만드는-방법">동기적 함수를 비동기 함수처럼 만드는 방법</h2>
+<hr />
+
+:ET
