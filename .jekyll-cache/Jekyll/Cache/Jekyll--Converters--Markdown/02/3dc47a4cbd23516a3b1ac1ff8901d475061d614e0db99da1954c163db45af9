@@ -1,0 +1,52 @@
+I"�<p>로그인이 필요한 앱의 경우 사용자가 로그인을 했는지의 여부에 따라 첫 시작 화면이 달라지곤 한다. <br />
+내가 진행하고 있는 프로젝트에도 이러한 기능이 필요하기에 간단히 정리해 보고자 한다.</p>
+
+<p>iOS13 이후 아이패드에서 멀티 윈도우를 지원하게 되면서 하나의 앱에 여러 화면이 동시에 요구되는 상황이 발생했고 이를 위해 여러 scene을 관리하는 SceneDelegate가 필요하게 되었다.
+<br /></p>
+<div style="text-align: center;">
+	<img src="/images/20201114_8/appdelegate_ios12.png" width="80%" />
+</div>
+<p>이처럼 iOS12까지는 하나의 앱이 하나의 화면만 관리하였기에 AppDelegate에서 UI LifeCycle과 Process LifeCycle을 함께 관리하였으나,
+<br />
+<br />
+<br /></p>
+<div style="text-align: center;">
+	<img src="/images/20201114_8/ios13.png" width="80%" />
+</div>
+<p>iOS13 이후, UI LifeCycle을 SceneDelegate에서 관리하게 되었고 AppDelegate에는 Session LifeCycle이 추가되었다.</p>
+
+<p>iOS12 이전을 Development Target으로 삼았다면 SceneDelegate를 삭제한 후 AppDelegate에서 rootViewController를 처리해주면 되지만 이번 프로젝트에서는 iOS14 이상에서만 동작하는 기능이 있기 때문에 그대로 SceneDelegate에서 rootViewController를 처리해주었다.<br />
+<del>사실 거창한 기능은 아니고 위젯 기능이 필요해서 그렇다.</del></p>
+
+<p>방법은 간단하다. AppDelegate.swift의 <code class="language-plaintext highlighter-rouge">application(_ application: , didFinishLaunchingWithOptions launchOptions: ) -&gt; Bool</code> 메서드에 작성할 내용을 SceneDelegate에 작성하면 끝이다.</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="c1">// SceneDelegate.swift</span>
+
+<span class="k">var</span> <span class="nv">window</span><span class="p">:</span> <span class="kt">UIWindow</span><span class="p">?</span>
+
+<span class="kd">func</span> <span class="nf">scene</span><span class="p">(</span><span class="n">_</span> <span class="nv">scene</span><span class="p">:</span> <span class="kt">UIScene</span><span class="p">,</span> <span class="n">willConnectTo</span> <span class="nv">session</span><span class="p">:</span> <span class="kt">UISceneSession</span><span class="p">,</span> <span class="n">options</span> <span class="nv">connectionOptions</span><span class="p">:</span> <span class="kt">UIScene</span><span class="o">.</span><span class="kt">ConnectionOptions</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">guard</span> <span class="k">let</span> <span class="nv">scene</span> <span class="o">=</span> <span class="p">(</span><span class="n">scene</span> <span class="k">as?</span> <span class="kt">UIWindowScene</span><span class="p">)</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="p">}</span>
+    <span class="n">window</span> <span class="o">=</span> <span class="kt">UIWindow</span><span class="p">(</span><span class="nv">windowScene</span><span class="p">:</span> <span class="n">scene</span><span class="p">)</span>
+
+    <span class="c1">// 아카이빙된 토큰 값을 불러오는 코드는 생략하였다.</span>
+
+    <span class="k">if</span> <span class="kt">UserInfoManager</span><span class="o">.</span><span class="n">tokens</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+    	<span class="nf">startWithLoginView</span><span class="p">()</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    	<span class="nf">startWithMainView</span><span class="p">()</span>
+    <span class="p">}</span>
+    
+<span class="p">}</span>
+<span class="kd">func</span> <span class="nf">startWithLoginView</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">guard</span> <span class="k">let</span> <span class="nv">loginVC</span> <span class="o">=</span> <span class="kt">UIStoryboard</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"LoginController"</span><span class="p">,</span> <span class="nv">bundle</span><span class="p">:</span> <span class="kc">nil</span><span class="p">)</span><span class="o">.</span><span class="nf">instantiateViewController</span><span class="p">(</span><span class="nv">withIdentifier</span><span class="p">:</span> <span class="s">"LoginNavVC"</span><span class="p">)</span> <span class="k">as?</span> <span class="kt">UINavigationController</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="p">}</span>
+    <span class="n">window</span><span class="p">?</span><span class="o">.</span><span class="n">rootViewController</span> <span class="o">=</span> <span class="n">loginVC</span>
+    <span class="n">window</span><span class="p">?</span><span class="o">.</span><span class="nf">makeKeyAndVisible</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">startWithMainView</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">guard</span> <span class="k">let</span> <span class="nv">mainVC</span> <span class="o">=</span> <span class="kt">UIStoryboard</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"MainController"</span><span class="p">,</span> <span class="nv">bundle</span><span class="p">:</span> <span class="kc">nil</span><span class="p">)</span><span class="o">.</span><span class="nf">instantiateViewController</span><span class="p">(</span><span class="nv">withIdentifier</span><span class="p">:</span> <span class="s">"MainTabVC"</span><span class="p">)</span> <span class="k">as?</span> <span class="kt">UITabBarController</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="p">}</span>
+    <span class="n">window</span><span class="p">?</span><span class="o">.</span><span class="n">rootViewController</span> <span class="o">=</span> <span class="n">mainVC</span>
+    <span class="n">window</span><span class="p">?</span><span class="o">.</span><span class="nf">makeKeyAndVisible</span><span class="p">()</span>
+<span class="p">}</span></code></pre></figure>
+
+:ET
