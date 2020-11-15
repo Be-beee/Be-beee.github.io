@@ -1,0 +1,47 @@
+I"�<p><em>해당 포스팅은 <a href="https://www.inflearn.com/course/iOS-Concurrency-GCD-Operation">iOS Concurrency(동시성) 프로그래밍, 동기 비동기 처리 그리고 GCD/Operation - 디스패치큐와 오퍼레이션큐의 이해</a> 강의를 수강하고 개인적으로 정리한 내용을 기록한 것 입니다.</em>
+<br />
+<br /></p>
+
+<h2 id="디스패치-그룹의-개념">디스패치 그룹의 개념</h2>
+<hr />
+<p>디스패치 그룹은 여러 작업을 유사한 기준으로 묶어 묶인 작업이 끝나는 시기가 필요할 떄 사용한다.</p>
+
+<p>다음의 코드처럼 사용할 수 있다.</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="nv">group1</span> <span class="o">=</span> <span class="kt">DispatchGroup</span><span class="p">()</span>
+<span class="kt">DispatchQueue</span><span class="o">.</span><span class="nf">global</span><span class="p">(</span><span class="nv">qos</span><span class="p">:</span> <span class="p">)</span><span class="o">.</span><span class="nf">async</span><span class="p">(</span><span class="nv">group</span><span class="p">:</span> <span class="n">group1</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span> <span class="c1">// 작업을 보낼 때 그룹 꼬리표를 붙여주는 느낌</span>
+<span class="kt">DispatchQueue</span><span class="o">.</span><span class="nf">global</span><span class="p">(</span><span class="nv">qos</span><span class="p">:</span> <span class="p">)</span><span class="o">.</span><span class="nf">async</span><span class="p">(</span><span class="nv">group</span><span class="p">:</span> <span class="n">group1</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+<span class="kt">DispatchQueue</span><span class="o">.</span><span class="nf">global</span><span class="p">()</span><span class="o">.</span><span class="nf">async</span><span class="p">(</span><span class="nv">group</span><span class="p">:</span> <span class="n">group1</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+
+<span class="n">group1</span><span class="o">.</span><span class="nf">notify</span><span class="p">(</span><span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span><span class="o">.</span><span class="n">main</span><span class="p">){</span> <span class="p">[</span><span class="k">weak</span> <span class="k">self</span><span class="p">]</span> <span class="k">in</span>
+	<span class="c1">// 모든 작업이 끝났을 때 해당 클로저 실행</span>
+	<span class="k">self</span><span class="p">?</span><span class="o">.</span><span class="n">textLabel</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s">"모든 작업이 완료되었습니다."</span>
+<span class="p">}</span></code></pre></figure>
+
+<p><br /></p>
+
+<h3 id="동기적인-기다림">동기적인 기다림</h3>
+<hr />
+<p>어떤 이유로 그룹의 완료 알림에 비동기적으로 응답할 수 없는 경우, 대신 디스패치 그룹에서 <code class="language-plaintext highlighter-rouge">wait()</code> 메서드를 사용할 수 있다.<br />
+모든 작업이 완료될 때까지 현재 대기열을 차단하는 동기적인 방법으로,<br />
+작업이 완료될 때까지, 얼마나 오래 기다릴지 기다리는 시간을 지정하는 선택적 파라미터가 필요하다.<br />
+기다리는 시간을 지정하지 않으면 무제한 대기한다.</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="nv">group1</span> <span class="o">=</span> <span class="kt">DispatchGroup</span><span class="p">()</span>
+<span class="kt">DispatchQueue</span><span class="o">.</span><span class="nf">global</span><span class="p">(</span><span class="nv">qos</span><span class="p">:</span> <span class="p">)</span><span class="o">.</span><span class="nf">async</span><span class="p">(</span><span class="nv">group</span><span class="p">:</span> <span class="n">group1</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+<span class="kt">DispatchQueue</span><span class="o">.</span><span class="nf">global</span><span class="p">(</span><span class="nv">qos</span><span class="p">:</span> <span class="p">)</span><span class="o">.</span><span class="nf">async</span><span class="p">(</span><span class="nv">group</span><span class="p">:</span> <span class="n">group1</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+<span class="kt">DispatchQueue</span><span class="o">.</span><span class="nf">global</span><span class="p">()</span><span class="o">.</span><span class="nf">async</span><span class="p">(</span><span class="nv">group</span><span class="p">:</span> <span class="n">group1</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+
+<span class="k">if</span> <span class="n">group1</span><span class="o">.</span><span class="nf">wait</span><span class="p">(</span><span class="nv">timeout</span><span class="p">:</span> <span class="o">.</span><span class="nf">now</span><span class="p">()</span><span class="o">+</span><span class="mi">60</span><span class="p">)</span> <span class="o">==</span> <span class="o">.</span><span class="n">timeOut</span> <span class="p">{</span>
+	<span class="nf">print</span><span class="p">(</span><span class="s">"작업이 60초 안에 종료하지 않았습니다."</span><span class="p">)</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>작업이 제때 끝나지 않았을 때 처리하기 유용하다.
+<br />
+<br />
+<br /></p>
+
+<h2 id="디스패치-그룹의-사용비동기-디스패치-그룹">디스패치 그룹의 사용(비동기 디스패치 그룹)</h2>
+<hr />
+<p>디스패치 그룹 클로저 내에서 비동기 함수를 호출할 때 주의가 필요하다. 내부에서 비동기적으로 다른 메서드를 큐로 보냈기 때문에 종료 시점이 잘못 인식될 수 있다.</p>
+:ET
