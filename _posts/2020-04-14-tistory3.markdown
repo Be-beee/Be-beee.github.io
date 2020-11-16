@@ -1,0 +1,51 @@
+---
+layout: post
+title: Gesture
+image: 8.jpg
+tags: [iOS, Swift]
+categories: iOS
+---
+*개인적으로 정리한 내용을 기록한 글입니다. [티스토리 블로그](https://be-beee.tistory.com)의 글을 마크다운 형식으로 재작성하였습니다.* <br><br>
+
+어플리케이션의 제스처는 여러 종류가 있으며, 각 제스처에 따라 화면에서 어떻게 반응할지를 지정해줄 수 있다.
+<div style="text-align: center;">
+	<img src="{{site.baseurl}}/images/20200414_3/gesture.jpg" width="80%">
+</div>
+<br><br>
+각 제스처는 `UIGestureRecognizer`를 이용하여 제스처를 다룰 수 있다. 이 글에서는 Swipe를 예시로 다루고자 한다.
+ 
+GestureRecognizer를 사용하기 위해서는 `viewDidLoad()` 메서드 내에
+{% highlight markdown %}
+1. 해당 제스처에 맞는 recognizer를 선언하고,
+2. View Controller에 GestureRecognizer를 추가한 다음,
+3. 제스처 사용시 실행되는 액션 메서드를 선언하면 된다.
+{% endhighlight %}
+
+Swipe의 경우,
+
+{% highlight Swift %}
+let left = UISwipeGestureRecognizer(target: self, action: #selector(mvLeft))
+left.direction = .left
+{% endhighlight %}
+ 
+이와 같이 선언할 수 있고, 스와이프의 방향에 따라 `.direction`의 값이 바뀔 수 있다.
+`action:` 의 selector는 함수를 직접 지정하는 기능을 가진 일종의 함수 선택자로 Objective-C 메서드를 호출할 때 사용한다.
+Tap의 경우 `UITapGestureRecognizer(target: , action: )`을 선언한다.
+ 
+ 
+선언한 변수는 View Controller에 추가해야 제대로 동작하므로 다음과 같은 코드를 추가해야한다.
+
+{% highlight Swift %}
+self.view.addGestureRecognizer(left)
+{% endhighlight %}
+ 
+그 후 제스처에 해당하는 액션 메서드를 선언하면 된다. @objc 는 해당 메서드가 Objective-C 메서드임을 나타낸다.
+
+{% highlight Swift %}
+@objc func mvLeft(sender: UIGestureRecognizer) {
+	// 여기에 제스처에 따라 바뀌어야할 화면이나 오브젝트를 지정한다.
+}
+{% endhighlight %}
+
+---
+*참고: [https://www.inflearn.com/course/ios](https://www.inflearn.com/course/ios)*

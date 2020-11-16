@@ -1,0 +1,66 @@
+I"�<p><em>개인적으로 정리한 내용을 기록한 글입니다. <a href="">티스토리 블로그</a>의 글을 마크다운 형식으로 재작성하였습니다.</em> <br /><br />
+iOS 어플리케이션은 여러 ViewController로 구성되어 있으며 각각의 VC는 LifeCycle을 지니고 있다.
+ViewController LifeCycle은 화면에 나타나는 것에서 시작하여 사라지기까지의 과정을 의미하며, 이 사이클을 잘 이해해야만 앱의 전체적인 실행 흐름과 레이아웃 구성을 파악할 수 있다.</p>
+
+<p>ViewController의 생명 주기 단계는 다음과 같다.</p>
+
+<figure class="highlight"><pre><code class="language-markdown" data-lang="markdown"><span class="p">1.</span> awakeFromNib()
+<span class="p">2.</span> viewDidLoad()
+<span class="p">3.</span> viewWillAppear()
+<span class="p">4.</span> viewDidAppear()
+<span class="p">5.</span> viewWillDisappear()
+<span class="p">6.</span> viewDidDisappear()
+<span class="p">7.</span> deinit</code></pre></figure>
+
+<p>각 메서드의 호출 시기 및 특징은 다음과 같이 정리할 수 있다.
+<br /><br /></p>
+
+<h2 id="awakefromnib">awakeFromNib()</h2>
+<hr />
+
+<p>Nib/Xib는 미니 스토리보드로 이러한 미니 스토리보드에서 객체가 생성될 때, 화면 연결 시점에 호출되는 메서드다.
+그렇기에 반드시 호출되는 것은 아니고 선택적으로(optional) 호출된다. UIViewController가 아닌 오브젝트(UITableViewCell, UIView 등)만 존재할 경우 viewDidLoad() 메서드가 없어 View 역할을 하기 위한 코드를 이 메서드 내에 작업할 수 있다.
+<br />
+<br /></p>
+
+<h2 id="viewdidload">viewDidLoad()</h2>
+<hr />
+
+<p>ViewController 생에 딱 한 번 호출되는 메서드로 처음 iOS프로젝트를 시작할 때 생성 되는 ViewController.swift 파일 내에 미리 작성되어 있다. 사용자에게 화면을 보여주기 전 세팅되어 있어야하는 작업을 작성하는 곳이다. 미리 생성해 둔property와 method를 다룰 수 있다.
+<br />
+<br /></p>
+
+<h2 id="viewwillappear">viewWillAppear()</h2>
+<p>ViewController의 화면이 올라오고 난 후 뷰가 화면에 나타나기 직전에 호출되는 메서드로, 뷰가 로드 된 이후 사용자에게 보이기 전에 컨트롤러에게 알리는 역할을 한다.
+처음 어플리케이션이 실행되고 첫 화면이 띄워질 때는 viewDidLoad(), viewWillAppear() 모두 호출되지만, 
+화면 전환을 통해 다시 현재의 화면으로 돌아올 때는 viewWillAppear()만 호출된다.
+그렇기에 다른 뷰로 이동했다가 되돌아 올 때 재호출되는 메서드로 화면이 나타날 때마다 수행해야 하는 작업을 정의하기에 좋다.
+<br />
+<br /></p>
+
+<h2 id="viewdidappear">viewDidAppear()</h2>
+<p>뷰가 데이터와 함께 완전히 화면에 나타난 후 호출되는 메서드이다.
+<br />
+<br /></p>
+
+<h2 id="viewwilldisappear">viewWillDisappear()</h2>
+<p>다음 ViewController로 화면이 전환하거나 현재 ViewController가 사라지기 직전에 호출되는 메서드이다.
+<br />
+<br /></p>
+
+<h2 id="viewdiddisappear">viewDidDisappear()</h2>
+<p>ViewController들이 화면에서 사라지고 난 직후 호출되는 메서드이다.
+화면이 사라지고 나면 멈춰야하는 작업들을 여기에 작성한다.
+<br />
+<br /></p>
+
+<h2 id="deinit">deinit</h2>
+<p>ViewController를 완전히 종료한 후 소멸될 때 호출된다. swift class의 소멸 시 호출하는 deinit과 동일하며, 디이니셜라이저가 호출되지 않을 경우 메모리 누수 문제가 발생할 수 있다.
+<br />
+<br /></p>
+
+<hr />
+
+<p>참고: https://blog.naver.com/jdub7138/220931788895 <br />
+https://tono18.tistory.com/11?category=837544</p>
+:ET

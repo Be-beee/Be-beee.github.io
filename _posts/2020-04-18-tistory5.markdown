@@ -1,0 +1,68 @@
+---
+layout: post
+title: Alert
+image: 9.jpg
+tags: [iOS, Swift]
+categories: iOS
+---
+*개인적으로 정리한 내용을 기록한 글입니다. [티스토리 블로그](https://be-beee.tistory.com)의 글을 마크다운 형식으로 재작성하였습니다.* <br><br>
+
+Alert를 구현하기 위해서는 다음과 같은 단계가 필요하다.
+{% highlight markdown %}
+1. AlertController 타입 변수 생성
+2. AlertAction 타입 변수 생성
+3. AlertController.addAction(AlertAction)
+4. self.present()로 alert 표시
+{% endhighlight %}
+<br>
+<br>
+
+ 
+## UIAlertController 변수 생성하기
+{% highlight Swift %}
+let alert = UIAlertController(title: nil, message: "메시지", preferredStyle: .alert)
+{% endhighlight %}
+preferredStyle은 alert, actionSheet 두 가지가 존재하며 각각 다음과 같이 표시된다.
+<div style="text-align: center;">
+	<img src = "{{site.baseurl}}/images/20200418_5/alert_type.png" width="80%">
+</div>
+<br>
+<br>
+
+## UIAlertAction 변수 생성하기
+다음으로 UIAlertAction 변수를 생성하여 AlertController에 액션을 추가한다. 추가한 액션 수에 따라 Alert의 형태가 달라질 수 있고, 사용자가 각 액션을 선택했을 때 호출되는 클로저를 작성할 수 있다.
+{% highlight Swift %}
+let ok = UIAlertAction(title: "확인", style: .default) { (action) in
+        // 확인 버튼을 눌렀을 때 실행할 코드
+}
+let cancel = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+
+alert.addAction(ok)
+alert.addAction(cancel)
+{% endhighlight %}
+
+ 
+`handler:` 부에 원하는 클로저를 작성하거나 메서드 이름을 매개변수로 기입할 수있다. style의 경우 `.default`, `.cancel`, `.destructive`의 세 종류 중 하나를 입력할 수있다. 각각의 스타일은 다음의 경우 사용할 수 있다.
+
+{% highlight markdown %}
+- .default: 액션 버튼에 기본적인 스타일을 적용할 때 (기본)
+- .cancel: 원하는 명령을 취소하거나 데이터 또는 화면을 변하지 않은 상태로 둘 때, 이 스타일을 사용할 경우 주로 handler: 부에 nil을 넣는다.
+- .destructive: 화면에 변화가 있거나 데이터를 삭제하고자 할 때
+{% endhighlight %}
+
+ 
+해당하는 상황에 따라 적절한 스타일을 적용함으로써 사용자에게 행위에 따른 경각심을 줄 수 있다.
+<br>
+<br>
+<br>
+
+## self.present() 호출하기
+마지막으로 present() 메서드를 호출하여 생성한 Alert를 화면에 표시하도록 한다.
+{% highlight Swift %}
+self.present(alert, animated: true, completion: nil)
+{% endhighlight %}
+<br>
+<br>
+
+---
+*참고: [https://www.inflearn.com/course/ios](https://www.inflearn.com/course/ios)*
