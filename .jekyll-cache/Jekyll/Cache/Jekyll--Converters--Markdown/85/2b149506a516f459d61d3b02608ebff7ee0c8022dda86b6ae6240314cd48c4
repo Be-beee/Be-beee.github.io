@@ -1,5 +1,0 @@
-I"�<p>iOS 어플리케이션은 여러 ViewController로 구성되어 있으며 각각의 VC는 LifeCycle을 지니고 있다.
-ViewController LifeCycle은 화면에 나타나는 것에서 시작하여 사라지기까지의 과정을 의미하며, 이 사이클을 잘 이해해야만 앱의 전체적인 실행 흐름과 레이아웃 구성을 파악할 수 있다.</p>
-
-<p>ViewController의 생명 주기 단계는 다음과 같다.</p>
-:ET
