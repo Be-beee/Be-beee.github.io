@@ -1,0 +1,63 @@
+---
+layout: post
+title: 8. Operation
+toc: true
+tags: [iOS, Concurrency, Swift]
+categories: Concurrency
+---
+*해당 포스팅은 [iOS Concurrency(동시성) 프로그래밍, 동기 비동기 처리 그리고 GCD/Operation - 디스패치큐와 오퍼레이션큐의 이해](https://www.inflearn.com/course/iOS-Concurrency-GCD-Operation) 강의를 수강하고 개인적으로 정리한 내용을 기록한 것 입니다.*
+<br>
+<br>
+
+## 오퍼레이션(Operation)이란
+---
+어떤 단위적인 작업(압축을 푸는 작업, 필터를 적용하는 작업 등)을 클래스화해서 기능을 높인 객체
+
+- (기본) 동기적으로 설정되어 있다.
+- 인스턴스화하여 작업을 한 번만 실행 가능하다. (재사용하기를 원한다면 다시 객체를 생성해야한다.)
+
+**오퍼레이션 큐와 결합**하여 **비동기적으로** 많은 추가 기능을 사용할 수 있다.
+<br>
+<br>
+<br>
+
+## 오퍼레이션의 고유 기능
+---
+- 취소
+- 순서 지정(의존성)
+- 상태 체크(state machine)
+- KVO notifications
+- QoS 수준
+- completionBlock (closure) 제공
+
+<br>
+<br>
+<br>
+
+## 오퍼레이션 라이프 사이클
+---
+<div style="text-align: center;">
+	<img src = "{{site.baseurl}}/images/20201120_12/lifecycle2.png" width = "90%">
+</div>
+
+## 사용 예시
+---
+오퍼레이션(Operation)은 스위프트에서 구현된 추상 클래스로, 상속을 통해 사용 가능하다.
+
+{% highlight Swift %}
+class SomeOperation: Operation {
+	var inputImage: UIImage?
+	var outputImage: UIImage?
+
+	override func main() {
+		// 정의할 메서드 내용
+	}
+}
+
+{% endhighlight %}
+
+
+---
+*참고: [https://www.inflearn.com/course/iOS-Concurrency-GCD-Operation](https://www.inflearn.com/course/iOS-Concurrency-GCD-Operation)*
+
+
