@@ -1,0 +1,56 @@
+---
+layout: post
+title: 9. Operation Queue
+toc: true
+tags: [iOS, Concurrency, Swift]
+categories: Concurrency
+---
+*해당 포스팅은 [iOS Concurrency(동시성) 프로그래밍, 동기 비동기 처리 그리고 GCD/Operation - 디스패치큐와 오퍼레이션큐의 이해](https://www.inflearn.com/course/iOS-Concurrency-GCD-Operation) 강의를 수강하고 개인적으로 정리한 내용을 기록한 것 입니다.*
+<br>
+<br>
+
+## 오퍼레이션 큐
+---
+- 오퍼레이션을 담아서 사용할 수 있는 대기열
+- 내부적으로 GCD를 활용해 구현되어 있다.
+<br>
+<br>
+
+## 특징
+---
+- 몇 개의 스레드를 사용할 것인지 구체적인 설정 가능하다.
+
+```swift
+maxConcurrentOperationCount = 1 // serial
+maxConccurrentOperationCount = 2 // 두 개의 스레드 사용
+```
+
+- QoS의 구체적인 설정이 가능하다. (디폴트는 background)
+	- 오퍼레이션 자체의 품질을 설정하면 큐의 품질이 승격될 수 있다.
+	- 다만 기반이 되는(underlying) 디스패치 큐까지 설정이 가능하므로 underlyung 큐의 품질이 가장 우선적으로 적용된다.
+
+- 오퍼레이션 추가 방법: 클로저, 오퍼레이션, 오퍼레이션 배열
+
+- 오퍼레이션이 한 번 실행되거나 취소되면 오퍼레이션 큐를 떠난다.
+
+- 동기적으로 기다리는 메서드 존재 `waitUntilAllOperationsAreFinished()`
+
+- 일시 중지, 재개 기능 `isSuspended`
+
+```swift
+let someQueue = OperationQueue()
+someQueue.addOperation(oneOperation)
+someQueue.addOperations([], waitUntilFinished: true)
+```
+
+## 큐의 종류 정리
+---
+<div style="text-align: center;">
+	<img src="{{site.baseurl}}/images/20201121_13/kindofqueue.jpg">
+</div>
+<br>
+<br>
+<br>
+
+---
+*이미지 참고: [https://www.inflearn.com/course/iOS-Concurrency-GCD-Operation](https://www.inflearn.com/course/iOS-Concurrency-GCD-Operation)*
