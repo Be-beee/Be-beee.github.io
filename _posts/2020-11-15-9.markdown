@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 6. 디스패치 그룹
-image: 9.jpg
+toc: true
 tags: [iOS, Concurrency, Swift]
 categories: Concurrency
 ---

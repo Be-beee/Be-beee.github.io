@@ -1,7 +1,7 @@
 ---
 layout: post
 title: ViewController LifeCycle
-image: 4.jpg
+toc: true
 tags: [iOS, Swift]
 categories: iOS
 ---

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 2. Sync vs. Async
-image: 3.jpg
+toc: true
 tags: [iOS, Concurrency, Swift]
 categories: Concurrency
 ---

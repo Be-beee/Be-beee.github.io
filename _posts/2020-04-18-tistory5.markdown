@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Alert
-image: 9.jpg
+toc: true
 tags: [iOS, Swift]
 categories: iOS
 ---

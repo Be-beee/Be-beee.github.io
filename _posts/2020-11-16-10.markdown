@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 7. 동시성과 관련된 문제
-image: 11.jpg
+toc: true
 tags: [iOS, Concurrency, Swift]
 categories: Concurrency
 ---

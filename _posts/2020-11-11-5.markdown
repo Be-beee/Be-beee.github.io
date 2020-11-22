@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 3. Serial vs. Concurrent
-image: 5.jpg
+toc: true
 tags: [iOS, Concurrency, Swift]
 categories: Concurrency
 ---

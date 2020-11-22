@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 5. GCD 사용 시 주의해야 할 사항
-image: 8.jpg
+toc: true
 tags: [iOS, Concurrency, Swift]
 categories: Concurrency
 ---

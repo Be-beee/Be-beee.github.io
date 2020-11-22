@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 4. 디스패치큐(GCD)의 종류와 특성
-image: 7.jpg
+toc: true
 tags: [iOS, Concurrency, Swift]
 categories: Concurrency
 ---

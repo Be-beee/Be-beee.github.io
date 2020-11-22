@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 1. GCD, Operation 개요
-image: 2.jpg
+toc: true
 tags: [iOS, Concurrency, Swift]
 categories: Concurrency
 ---

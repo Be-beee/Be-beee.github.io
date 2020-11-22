@@ -1,7 +1,6 @@
 ---
 layout: post
 title: Unwind Segue
-image: 5.jpg
 tags: [iOS, Swift]
 categories: iOS
 ---

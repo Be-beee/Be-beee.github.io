@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 깃허브 블로그를 처음 개설하며 (bundle install 에러 해결하기)
-image: 20201109.png
+toc: true
 tags: [Github, Blog]
 categories: blog
 ---

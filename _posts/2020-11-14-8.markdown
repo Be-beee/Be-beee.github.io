@@ -1,7 +1,6 @@
 ---
 layout: post
 title: rootViewController 지정하기(iOS13 이후)
-image: 4.jpg
 tags: [iOS, Swift, Xcode]
 categories: iOS
 ---
