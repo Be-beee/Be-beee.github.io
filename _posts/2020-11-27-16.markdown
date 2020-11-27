@@ -1,0 +1,105 @@
+---
+layout: post
+title: XMLParser를 활용한 데이터 파싱하기
+toc: true
+tags: [iOS, Swift, Xcode]
+categories: iOS
+---
+
+개인 프로젝트를 진행하면서 `.json`파일 못지 않게 `.xml`파일 및 `html`데이터를 파싱하는 경우가 잦았기에(~~사실 오늘도 써먹었다~~) 오늘 포스팅에서는 `XMLParser`를 활용한 데이터 파싱에 대해 정리하고자 한다.
+
+`.json`의 경우 `JSONDecoder`를 활용해 그 데이터를 읽어와 디코딩하고 객체에 저장하는 것이 용이하지만 `.xml`의 경우에는 약간 다르다. 우리가 `UITableView`에 대한 각종 설정을 해줄 때 `UITableViewDelegate`를 이용하듯이 `.xml` 파일의 데이터를 파싱하기 위해 `XMLParserDelegate`를 통해 어떤 태그의 어떤 데이터를 읽어올 것인지에 대한 설정이 필요하다. 
+
+
+## XMLParserDelegate
+---
+XMLParserDelegate에 대한 [애플 공식 문서](https://developer.apple.com/documentation/foundation/xmlparserdelegate)를 통해 어떤 메서드를 구현해야 하는지 확인 가능하다. 주로 다음과 같은 메서드를 구현한다.
+
+{% highlight Swift %}
+func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String] = [:]) {} // 시작 태그 발견시 실행
+{% endhighlight %}
+XMLParser가 시작 태그를 발견할 때 실행되는 메서드로, `elementName`에 시작 태그명이 저장된다. 또한 태그에 속성이 포함될 경우 `attributeDict`로 속성값에 접근이 가능하다.<br>
+예를 들어, `<img src="sample_url" width="100%">`와 같은 태그에서
+`elementName` 에는 `img`,
+`attributeDict`에는 `["src": "sample_url", "width": "100%"]`가 저장된다.
+<br>
+<br>
+<br>
+
+{% highlight Swift %}
+func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {} // 끝 태그 발견시 실행
+{% endhighlight %}
+XMLParser가 끝 태그를 발견할 시 실행되는 메서드로, 위의 메서드와 마찬가지로 `elementName`에 끝 태그명이 저장된다.
+<br>
+<br>
+<br>
+
+{% highlight Swift %}
+func parser(_ parser: XMLParser, foundCharacters string: String) {} // 태그 내 문자열 활용 시
+{% endhighlight %}
+태그 내 문자열을 활용해야할 때 이 메서드를 활용할 수 있다. `foundCharacters string`에 태그 내의 문자열이 저장된다.
+<br>
+<br>
+<br>
+
+## 활용 예시
+---
+위와 같은 메서드를 활용하여 [내 깃허브](https://github.com/Be-beee)의 [컨트리뷰션 데이터](https://github.com/users/Be-beee/contributions)를 리스트로 불러오는 실습을 수행해보았다. 
+
+XMLParserDelegate를 활용하기 위해 `ContributionsParser` 객체를 생성하였다. `ViewController`에 상속하는 방법도 있으나 역할을 분명히 분리하고 싶었다. XMLParserDelegate는 `NSObject`를 상속하지 않으면 사용할 수 없으므로 함께 상속하였다.
+
+{% highlight Swift %}
+class ContributionsParser: NSObject, XMLParserDelegate {
+    var userContributions = UserContributions()
+    var tag: Tag = .none
+    var totalString = ""
+    override init() {
+        super.init()
+    }
+    
+    init(data: Data) {
+        super.init()
+        let parser = XMLParser(data: data)
+        parser.delegate = self
+        parser.parse()
+    }
+}
+{% endhighlight %}
+
+`UserContributions` 객체는 컨트리뷰션 데이터를 용이하게 저장하기 위해 생성한 구조체이며, `Tag`는 필요한 태그 구분을 위한 열겨형이다. 이렇게 생성한 객체에서 `XMLParserDelegate`의 메서드를 구현하였다.
+<br>
+
+{% highlight Swift %}
+func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String] = [:]) {
+    if elementName == "h2" {
+        tag = .h2
+    } else if elementName == "rect" {
+        tag = .rect
+        if let date = attributeDict["data-date"], let count = attributeDict["data-count"] {
+            let commitData = (date: date, count: Int(count) ?? 0)
+            userContributions.commitHistory.insert(commitData, at: 0)
+        }
+    } else {
+        tag = .none
+    }
+}
+func parser(_ parser: XMLParser, foundCharacters string: String) {
+    if tag == .h2 {
+        totalString += string // 주의
+    }
+}
+{% endhighlight %}
+
+`didStartElement elementName`이 포함된 메서드에서 태그의 속성 값이 필요했기 때문에 `attributeDict`에 저장된 key-value 값을 가져와 `UserContributions` 프로퍼티에 저장했다.<br>h2태그의 경우, 속성값보다 태그 내 문자열이 필요했기 때문에 `tag` 프로퍼티의 값을 `.h2`로 변경하기만 했다.
+
+`foundCharacters string`이 포함된 메서드에서는 h2 태그에 대해서만 처리해주었는데, 여기서 유의할 점은 <u>파싱을 시도하는 data, url 마다 태그 내 문자열이 저장되는 방식이 상이할 수 있다는 점이다.</u> <br> 불필요한 공백과 줄바꿈이 태그 내 문자열에 추가되어 있을 경우 `string` 값이 이상하게 저장될 수 있다. 이럴 경우 임시 방편으로 모든 `string` 값을 누적합 하여 저장하는 것으로 해결이 가능하다.
+
+실습 실행 결과는 다음과 같다.
+<div style="text-align: center;">
+	<img src="{{site.baseurl}}/images/20201127_16/result.png" width="50%">
+</div>
+
+---
+위의 컨트리뷰션 데이터 실습에 대한 전체 코드는 [여기](https://github.com/Be-beee/TIL-2/tree/main/iOS/ContributionsTest)에서 확인할 수 있다.
+이전에도 [SimpleRSSReader]()라는 프로젝트를 진행하였는데 유저가 RSS 링크를 복붙하여 원하는 블로그를 쉽게 구독할 수 있도록 한 애플리케이션이다. 여기서도 역시 XMLParser, XMLParserDelegate가 활용되었다. ~~많관부~~
+
