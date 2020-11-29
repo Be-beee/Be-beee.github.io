@@ -203,20 +203,35 @@ self.sessionQueue.async {
 ---
 앞서 `Info.plist`에서 카메라 접근 권한을 얻을 때 라이브러리 접근 권한을 함께 얻었으므로 라이브러리에 사진을 저장할 수 있다. AVCam은 `fileOutput(_:didFinishRecordingTo:from:error:)` 콜백 메서드를 통해 권한을 체크하고 AVCaptureOutput이 출력으로 저장할 미디어 데이터를 제공한다.
 ```swift
-func savePhotoLibrary(image: UIImage) {
-    PHPhotoLibrary.requestAuthorization { status in
-        if status == .authorized {
-            // save
-            PHPhotoLibrary.shared().performChanges({
-                PHAssetChangeRequest.creationRequestForAsset(from: image)
-            }) { success, error in
-                print("이미지 저장 완료 했나? \(success)")
+func fileOutput(_ output: AVCaptureFileOutput,
+                    didFinishRecordingTo outputFileURL: URL,
+                    from connections: [AVCaptureConnection],
+                    error: Error?) {
+    // 생략
+        
+    if success {
+        // Check the authorization status.
+        PHPhotoLibrary.requestAuthorization { status in
+            if status == .authorized {
+                // Save the movie file to the photo library and cleanup.
+                PHPhotoLibrary.shared().performChanges({
+                    let options = PHAssetResourceCreationOptions()
+                    options.shouldMoveFile = true
+                    let creationRequest = PHAssetCreationRequest.forAsset()
+                    creationRequest.addResource(with: .video, fileURL: outputFileURL, options: options)
+                }, completionHandler: { success, error in
+                    if !success {
+                        print("AVCam couldn't save the movie to your photo library: \(String(describing: error))")
+                    }
+                    cleanup()
+                }
+                )
+            } else {
+                cleanup()
             }
-
-        } else {
-            // permission request
-            print("권한을 받지 못함")
         }
+    } else {
+        cleanup()
     }
 }
 ```
