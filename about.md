@@ -12,40 +12,6 @@ permalink: /about/
 
 [`#Swift`](https://be-beee.github.io/tags/#swift) [`#iOS`](https://be-beee.github.io/tags/#ios) [`#SwiftUI`](https://be-beee.github.io/tags/#swiftui) [`#RestAPI`](https://be-beee.github.io/tags/#api)
 
-## 개인 프로젝트
----
-프로젝트 제목을 클릭하면 프로젝트 저장소로 이동됩니다!
-
-- [슬기로운 독서 생활: 2020.06.21 - 2020.09.06](https://github.com/Be-beee/wise-booklife)
-<div style="text-align: center;">
-	<img src="{{ site.baseurl }}/images/about_proj/wisebook/main.png" width="36%">
-	<img src="{{ site.baseurl }}/images/about_proj/wisebook/main_search.png" width="36%">
-	<img src="{{ site.baseurl }}/images/about_proj/wisebook/record_detail.png" width="18%">
-</div>
-<br>
-<br>
-
-- [RSS Reader: 2020.09.11 - 2020.10.11](https://github.com/Be-beee/simple-rss-reader)
-<div style="text-align: center;">
-	<img src="{{ site.baseurl }}/images/about_proj/rss/main.png" width="30%">
-	<img src="{{ site.baseurl }}/images/about_proj/rss/searchresult.png" width="30%">
-	<img src="{{ site.baseurl }}/images/about_proj/rss/subscribe.png" width="30%">
-</div>
-<br>
-<br>
-- 매일커밋: 2020.11.09 - 현재
-<div style="text-align: center;">
-	<img src="{{ site.baseurl }}/images/about_proj/login_everycommit.png" width="30%">
-	<img src="{{ site.baseurl }}/images/about_proj/main_everycommit.png" width="30%">
-	<img src="{{ site.baseurl }}/images/about_proj/settings_everycommit.png" width="30%">
-</div>
-<br>
-<br>
-- [TIL](https://github.com/Be-beee/TIL-2): iOS 및 Swift 알고리즘에 관해 공부한 내용을 정리하는 공간입니다.😎
-
-*더 많은 프로젝트가 추가될 예정입니다.☺️*
-
-
 
 
 
