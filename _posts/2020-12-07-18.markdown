@@ -88,7 +88,9 @@ func sendNotification(hour: Int, minute: Int) {
     // 푸시 알림 등록
 }
 ```
-trigger의 경우 `Calendar`, `TimeInterval`, `Location`의 세 종류가 있다. 여기서는 매일 특정 시간마다 알림을 주어야 해서 Calendar를 사용했다.
+trigger의 경우 `Calendar`, `TimeInterval`, `Location`의 세 종류가 있다. 여기서는 매일 특정 시간마다 알림을 주어야 해서 Calendar를 사용했다.<br>
+
+2020.12.08 추가) 전체 소스코드는 [이 곳](https://github.com/Be-beee/TIL-2/tree/main/iOS/PushNotification_Local)에서 확인할 수 있다.
 <br>
 <br>
 <br>
