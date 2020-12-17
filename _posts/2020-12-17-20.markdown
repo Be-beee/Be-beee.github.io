@@ -1,0 +1,101 @@
+---
+layout: post
+title: App Store에 앱 등록 시 주의할 점
+toc: false
+tags: [iOS, Xcode, AppStore]
+categories: Project
+---
+
+최근에 진행한 [매일커밋 프로젝트](https://github.com/Be-beee/everyday-commit) 1.0 버전을 마무리한 후 다운로드의 용이성을 높이기 위해 앱스토어 등록 과정을 진행하였다.
+
+대체로 [이 곳](http://digitalnomadcamp.kr/article/앱후기/4/492/)의 과정을 많이 참조했다. 그 외에는 구글링 및 [App Store Connect 도움말](https://help.apple.com/app-store-connect/)을 참조하며 등록 절차를 마쳤다.
+
+<div style="text-align: center;">
+	<img src="{{ site.baseurl }}/images/20201217/completed.png" width="80%">
+</div>
+<br>
+<br>
+
+벌써 리젝의 늪이 두렵지만 어떻게든 되겠지!라는 마음으로 제출했던 것 같다. ~~그리고 이 글 작성하던 도중 리젝 받았다.~~ 등록 절차는 [해당 사이트](http://digitalnomadcamp.kr/article/앱후기/4/492/)에서 대략적으로 파악할 수 있고 제출 시 빠트린 부분이 있다면 경고 문구와 함께 제출되지 않으므로 크게 걱정할 것은 없다. 
+
+그렇다면 블로그에는 무엇을 정리해 둘 것인가. 처음 앱스토어에 등록해 본 만큼 위의 사이트에서 짚어주지 않은 주의할 점에 대해 기록하고자 한다. 아래에 기록한 내용은 <u>지극히 주관적</u>임을 밝힌다.
+<br>
+<br>
+<br>
+
+
+## 1. 6.5형 디스플레이 스크린 샷
+---
+스크린 샷 사양은 위에서 언급한 [도움말 - 스크린 샷 사양](https://help.apple.com/app-store-connect/#/devd274dd925)에 자세히 나와있다. 
+
+<div style="text-align: center;">
+	<img src="{{ site.baseurl }}/images/20201217/screenshot_spec.png">
+</div>
+<br>
+<br>
+
+다만, 나의 경우 iPhone 12의 스크린 샷은 6.5형에 맞지 않는다고 스크린 샷 등록이 되지 않았다. 결국 iPhone 12 Pro Max 시뮬레이터로 새로 테스트하여 스크린 샷을 등록했다. 웬만하면 Pro Max 시리즈로 스크린 샷 등록 절차를 진행하는 것이 나을 것 같다.
+
+<div style="text-align: center;">
+	<img src="{{ site.baseurl }}/images/20201217/display_screenshot.png">
+</div>
+
+5.5형 디스플레이의 경우 iPhone 8 Plus 스크린 샷을 등록했다.
+<br>
+<br>
+<br>
+
+## 2. XCode를 통한 앱 빌드하기
+---
+앱 빌드 시 중요한 것은 버전과 빌드 넘버다. **앱과 위젯 익스텐션의 버전, 빌드 넘버를 확인**하고, 빌드 타겟을 **Any iOS Device로 변경**한 후 [Product]-[Archive]를 통해 아카이빙을 진행한다.
+
+<div style="text-align: center;">
+	<img src="{{ site.baseurl }}/images/20201217/archive.png">
+</div>
+
+아카이빙 후 위와 같은 창이 나타나는데 Distribute App 후 App Store Connect를 선택하면 XCode가 알아서 앱을 빌드해준다.
+
+빌드된 앱은 App Store Connect의 TestFlight에서 확인할 수 있고 제출 준비 완료 상태가 되었을 때 업로드가 가능하다.
+
+<br>
+<br>
+<br>
+
+## 3. 수출 규정 관련 문서가 누락됨
+---
+TestFlight에 처음 앱을 빌드하고 나니 다음과 같은 경고문이 나를 반겼다.
+![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FcykLka%2FbtqFUSV4bue%2F5OmCrFbKrdKnmnTjd7jp8K%2Fimg.png)
+<div style="text-align: center; font-size: 80%;">
+	이미지 출처: https://clover7-webnote.tistory.com/343
+</div>
+<br>
+<br>
+
+국가 보안 규정에 대해 언급하고 있는 부분인데 아니요를 선택해 등록 가능하다.
+
+매번 새로 빌드할 때마다 선택하는 것이 귀찮을 때는 `Info.plist`에 코드로 등록도 가능하다.
+
+```xml
+<key>ITSAppUsesNonExemptEncryption</key><false/>
+```
+
+
+## 4. 개인 정보 처리 방침 작성
+---
+[개인정보보호 포털](https://www.privacy.go.kr)의 개인정보 처리 방침 작성하기를 통해 관련 문서를 작성할 수 있다.
+
+나의 경우, 작성이 모두 끝난 후 해당 내용을 [깃허브에 업로드](https://github.com/Be-beee/everyday-commit/blob/main/PrivacyPolicy.txt)해서 URL을 따왔다.
+
+<div style="text-align: center;">
+	<img src="{{ site.baseurl }}/images/20201217/privacy_portal.png">
+</div>
+<br>
+<br>
+<br>
+
+
+
+---
+여담: 간단한 애플리케이션이라 리젝될 요소가 없다고 생각했는데 역시 내 생각이 짧았던 모양이다.(ㅎ..) 다음 포스팅은 리젝 후기나 프로젝트 회고록이 될 수도..?
+
+
