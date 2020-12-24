@@ -1,7 +1,7 @@
 ---
 layout: post
 title: App Store에 앱 등록 시 주의할 점
-toc: false
+toc: true
 tags: [iOS, Xcode, AppStore]
 categories: Project
 ---
