@@ -1,0 +1,81 @@
+---
+layout: post
+title: SwiftUI 간단 정리 링크 모음 - 1
+toc: true
+tags: [iOS, Xcode, SwiftUI]
+categories: SwiftUI
+---
+
+[TIL](https://github.com/Be-beee/TIL)에 정리한 SwiftUI 요약본 링크 모음.
+
+## Text
+---
+UIKit의 `UILabel`과 같은 역할을 하는 뷰.<br>
+[이동](https://github.com/Be-beee/TIL/tree/main/SwiftUI/SwiftUI_Test#text)
+<div style="text-align: center;">
+	<img src="{{ site.baseurl }}/images/20210104/padding_first.png" width="40%" style="border: 1px solid black;">
+	<img src="{{ site.baseurl }}/images/20210104/background_first.png" width="40%" style="border: 1px solid black;">
+</div>
+<br>
+<br>
+
+## Image
+---
+UIKit의 `UIImageView`와 같은 역할을 하는 뷰.<br>
+[이동](https://github.com/Be-beee/TIL/tree/main/SwiftUI/SwiftUI_Test#image)
+<div style="text-align: center;">
+	<img src="{{ site.baseurl }}/images/20210104/image_test.png" width="40%" style="border: 1px solid black;">
+</div>
+<br>
+<br>
+
+## Button, Toggle
+---
+`UIButton`, `UISwitch`와 같은 역할을 하는 제어 뷰.<br>
+[이동](https://github.com/Be-beee/TIL/tree/main/SwiftUI/SwiftUI_Test#button-toggle)
+<div style="text-align: center;">
+	<img src="{{ site.baseurl }}/images/20210104/toggle_test.png" width="40%" style="border: 1px solid black;">
+</div>
+
+<br>
+<br>
+
+## Stack View
+---
+여러 뷰를 균등한 방향으로 배치함. 방향에 따라 HStack, VStack, ZStack이 있다.<br>
+[이동](https://github.com/Be-beee/TIL/tree/main/SwiftUI/SwiftUI_Test#stack)
+<div style="text-align: center;">
+	<img src="{{ site.baseurl }}/images/20210104/vstack.png" width="40%" style="border: 1px solid black;">
+</div>
+<br>
+<br>
+
+## List
+---
+`ForEach`와 `Section`을 활용해 다양한 리스트뷰를 표현할 수 있다.<br>
+[이동](https://github.com/Be-beee/TIL/tree/main/SwiftUI/List#list)
+<div style="text-align: center;">
+	<img src="{{ site.baseurl }}/images/20210104/section.png" width="40%" style="border: 1px solid black;">
+</div>
+<br>
+<br>
+
+## ScrollView
+---
+[이동](https://github.com/Be-beee/TIL/tree/main/SwiftUI/ScrollView#scrollview)
+<div style="text-align: center;">
+	<img src="{{ site.baseurl }}/images/20210104/scrollview.png" width="40%" style="border: 1px solid black;">
+</div>
+
+<br>
+<br>
+
+## Form
+---
+설정 화면처럼 데이터 엔트리 컨트롤러를 그룹핑한 컨테이너. Form 내부에 여러 뷰를 넣을 수 있다.<br>
+[이동](https://github.com/Be-beee/TIL/tree/main/SwiftUI/ScrollView#form)
+<div style="text-align: center;">
+	<img src="{{ site.baseurl }}/images/20210104/form.png" width="40%" style="border: 1px solid black;">
+</div>
+<br>
+<br>
