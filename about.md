@@ -13,5 +13,12 @@ permalink: /about/
 [`#Swift`](https://be-beee.github.io/tags/#swift) [`#iOS`](https://be-beee.github.io/tags/#ios) [`#SwiftUI`](https://be-beee.github.io/tags/#swiftui) [`#RestAPI`](https://be-beee.github.io/tags/#api)
 
 
+---
+애플리케이션 아이콘을 클릭하면 다운로드 페이지로 이동합니다!
+<div>
+    <a href="https://apps.apple.com/kr/app/dandi-%EB%94%94%EB%8D%B0%EC%9D%B4-%EA%B4%80%EB%A6%AC/id1565728718">
+        <img src="{{ site.baseurl }}/images/dandi_images/Icon.png" width="10%">
+    </a>
+</div>
 
 
